@@ -54,8 +54,10 @@ are two vertically oriented versions that I think work better:
 
 ![](hexes/arrow-hex_04.png) ![](hexes/arrow-hex_05.png)
 
+![](hexes/arrow-hex_06.png)
+
 Some fine tuning would certainly be worthwhile, but after comparing
 these images to other hex stickers that I happen to have both on my
 laptop and as image files, I’d suggest that the “arrow.apache.org” text
 in these final two is the lower bound on the font size for any text that
-we want to include
+we want to include.
