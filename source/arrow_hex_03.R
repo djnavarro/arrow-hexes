@@ -1,14 +1,20 @@
+library(magick)
+library(hexify)
 
-left_pad <- function(str, n) {
-  paste0(paste(rep(" ", n) , collapse = ""), str)
-}
+# crop the logo slightly
+imgpath <- tempfile()
+img <- image_read(here::here("logos", "arrow-logo_dark-opaque_02.png"))
+img <- image_crop(img, "1550x1550", "Center")
+image_write(img, imgpath)
 
-hexify::hexify(
-  from = here::here("logos", "arrow-logo_dark-opaque_01.png"),
-  to = here::here("hexes", "arrow_hex_03.png"),
-  text_label = left_pad("arrow.apache.org", 0),
-  text_colour = "#cccccc",
-  border_colour = "#ffffff",
+# generate the hex sticker
+hexify(
+  from = imgpath,
+  to = here::here("hexes", "arrow-hex_03.png"),
+  border_colour = "#222222",
   border_opacity = 100
 )
+
+# sigh: magick, why are you like this?
 gc()
+

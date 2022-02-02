@@ -7,8 +7,9 @@ library(tibble)
 library(showtext)
 
 # base colours
-foreground_colour <- "black"
-background_colour <- "white"
+foreground <- "black"
+background <- "white"
+muted <- "#dddddd"
 
 # load fonts
 font_add_google("Roboto")
@@ -21,21 +22,35 @@ single_arrow <- tibble(
   y = c(1, .5, 0, .2, .5, .8, 1)
 )
 
-# construct the ">>>" shape
+# arrow shades
+shades <- c(
+  muted, muted, muted, 
+  foreground, foreground, foreground, 
+  muted, muted, muted
+)
+
+# construct the ">>>" shape (TODO: just use purrr okay hon?)
 triple_arrow <- bind_rows(
   single_arrow,
   single_arrow,
   single_arrow,
-  .id = "arrow"
+  single_arrow, # black
+  single_arrow, # black
+  single_arrow, # black
+  single_arrow,
+  single_arrow,
+  single_arrow,
+  .id = "id"
 ) %>%
   mutate(
-    arrow = as.numeric(arrow),
-    x = x + arrow * .33
+    id = as.numeric(id),
+    x = x + (id - 2.8) * .34,
+    shade = shades[id]
   )
 
 # specify text information
 arrow_text <- tibble(
-  x = c(-1.2, -1.2, .21),
+  x = c(-1.15, -1.2, .21),
   y = c(.8, .5, .22),
   text = c("APACHE", "ARROW", "arrow.apache.org"),
   font = c("Roboto", "Barlow", "Roboto"),
@@ -55,9 +70,13 @@ pic <- ggplot() +
   
   geom_polygon(
     data = triple_arrow,
-    mapping = aes(x - x_shift, y - y_shift, group = arrow),
-    fill = foreground_colour,
-    colour = foreground_colour,
+    mapping = aes(
+      x = x - x_shift, 
+      y = y - y_shift, 
+      group = id,
+      fill = shade,
+      colour = shade
+    )
   ) +
   
   geom_text(
@@ -71,11 +90,13 @@ pic <- ggplot() +
       hjust = hjust
     ),
     vjust = "center",
-    colour = foreground_colour,
+    colour = foreground,
   ) +
   
   coord_equal() +
   scale_size_identity() +
+  scale_colour_identity() +
+  scale_fill_identity() +
   theme_void() +
   lims(
     x = c(-1.7, 2.05),
@@ -89,21 +110,21 @@ imgpath2 <- tempfile(fileext = ".png")
 # export image
 ggsave(
   filename = imgpath1,
-  bg = background_colour,
+  bg = background,
   width = 6,
   height = 6
 )
 
 # crop the image slightly
-img <- image_read(imgpath)
+img <- image_read(imgpath1)
 img <- image_crop(img, "1200x1200", "Center")
 image_write(img, imgpath2)
 
 # generate the hex sticker
 hexify(
   from = imgpath2,
-  to = here::here("hexes", "arrow-hex_04.png"),
-  border_colour = "#dddddd",
+  to = here::here("hexes", "arrow-hex_05.png"),
+  border_colour = foreground,
   border_opacity = 100
 )
 
